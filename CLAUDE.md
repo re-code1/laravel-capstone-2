@@ -4,6 +4,7 @@
 
 - **Backend:** Laravel 13 (PHP 8.3) using MariaDB (port 3309)
 - **Frontend:** Blade.php with plain CSS (`public/css/school.css`). No Tailwind, no npm, no Vite, no CDN links.
+- **Design standard:** Front-end styling follows `.claude/agents/frontend-designer.md` (colours, buttons, forms, tables, badges).
 
 ## Environment
 
