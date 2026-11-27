@@ -153,6 +153,6 @@ There are 11 more students, 6 per section. Their logins are their first name @sc
 
 Left out on purpose, to keep the project small:
 
-- **Bootstrap, Tailwind, npm, Vite or any CDN link.** Styling is plain CSS in `public/css/school.css`.
+- **npm, Vite or CDN links, for now.** Styling is plain CSS in `public/css/school.css`.
 - **A roles table or more than one role per user.** One `role` column per user is enough.
 - **Principal editing marks.** The principal can only read them.
