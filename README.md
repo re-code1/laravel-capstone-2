@@ -7,6 +7,23 @@ A school portal built with Laravel 13 for the PSHS full-stack capstone. Admins, 
 
 ---
 
+## Team and seats
+
+One owner per file, so we don't edit the same files at the same time.
+
+| Seat | Who | Branch | Builds | Owns these files |
+|---|---|---|---|---|
+| 1 Schema | Sir Homer | `feat/schema` | Migrations, models, relationships, the seeder | `database/`, `app/Models/` |
+| 2 Owner, login and layout | Reggie | `feat/auth` | Login and logout, the role middleware, a home page per role, the menu. Later: apply for leave (`feat/leave-apply`) | `routes/web.php`, `bootstrap/app.php`, `layouts/app.blade.php`, `Auth/`, `CLAUDE.md` |
+| 3 Students | Sir JP | `feat/students` | Teacher adds and edits students | `StudentController`, `StudentService`, its Form Requests, `views/students/` |
+| 4 Subjects and marks | Sir Iam | `feat/marks` | Teacher adds subjects and enters marks for their own subjects | `SubjectController`, `MarkController`, `MarkPolicy`, `views/subjects/`, `views/marks/` |
+| 5 Student portal | Sir Franklin | `feat/portal` | My subjects and My marks for the logged-in student | `PortalController`, `views/portal/` |
+| 6 Quality and principal | Sir Homer | `feat/tests` | Tests, CI, the principal's read-only lists | `tests/`, `.github/`, `PrincipalController`, `views/principal/` |
+
+`main` is protected: every change goes through a pull request with 1 approval and a passing `tests` check.
+
+---
+
 ## Setup
 
 ```bash
@@ -129,3 +146,13 @@ There are 11 more students, 6 per section. Their logins are their first name @sc
 ### Should the principal be able to change marks?
 
 **No.** The principal sees everything and decides on leave, but marks belong to the teacher who gave them. The marks Policy must refuse the principal, and a test must prove it.
+
+---
+
+## Not doing
+
+Left out on purpose, to keep the project small:
+
+- **npm, Vite or CDN links, for now.** Styling is plain CSS in `public/css/school.css`.
+- **A roles table or more than one role per user.** One `role` column per user is enough.
+- **Principal editing marks.** The principal can only read them.
