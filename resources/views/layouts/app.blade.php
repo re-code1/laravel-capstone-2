@@ -41,6 +41,9 @@
                     @if (Route::has('subjects.index'))
                         <a href="{{ route('subjects.index') }}" @class(['active' => request()->routeIs('subjects.*', 'marks.*')])>Subjects</a>
                     @endif
+                    @if (Route::has('attendance.index'))
+                        <a href="{{ route('attendance.index') }}" @class(['active' => request()->routeIs('attendance.*')])>Attendance</a>
+                    @endif
                 @endif
 
                 @if ($isAdmin || auth()->user()->hasRole('student'))
@@ -50,6 +53,9 @@
                     @endif
                     @if (Route::has('portal.marks'))
                         <a href="{{ route('portal.marks') }}" @class(['active' => request()->routeIs('portal.marks')])>My marks</a>
+                    @endif
+                    @if (Route::has('portal.attendance'))
+                        <a href="{{ route('portal.attendance') }}" @class(['active' => request()->routeIs('portal.attendance')])>My attendance</a>
                     @endif
                 @endif
 

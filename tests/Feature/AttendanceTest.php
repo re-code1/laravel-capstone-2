@@ -98,6 +98,23 @@ class AttendanceTest extends TestCase
         );
     }
 
+    public function test_the_teacher_menu_and_home_show_attendance_and_not_my_attendance(): void
+    {
+        $this->actingAs($this->adviser)->get('/')
+            ->assertOk()
+            ->assertSee('>Attendance</a>', false)
+            ->assertSee('Open attendance')
+            ->assertDontSee('My attendance');
+    }
+
+    public function test_the_student_menu_has_no_attendance_sheet_link(): void
+    {
+        $this->actingAs($this->juan->user)->get('/')
+            ->assertOk()
+            ->assertSee('My attendance')
+            ->assertDontSee('>Attendance</a>', false);
+    }
+
     public function test_an_adviser_can_save_attendance_for_their_own_section(): void
     {
         $response = $this->actingAs($this->adviser)->post('/attendance', $this->sheet());

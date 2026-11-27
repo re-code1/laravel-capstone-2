@@ -23,4 +23,12 @@
             <a href="{{ route('subjects.index') }}" class="btn btn-secondary">Open subjects</a>
         </div>
     @endif
+
+    @if (Route::has('attendance.index'))
+        <div class="card">
+            <h2>Attendance</h2>
+            <p>Record attendance for the section you advise.</p>
+            <a href="{{ route('attendance.index') }}" class="btn btn-secondary">Open attendance</a>
+        </div>
+    @endif
 @endsection

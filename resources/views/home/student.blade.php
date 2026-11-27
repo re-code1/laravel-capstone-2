@@ -23,4 +23,12 @@
             <a href="{{ route('portal.marks') }}" class="btn btn-secondary">Open my marks</a>
         </div>
     @endif
+
+    @if (Route::has('portal.attendance'))
+        <div class="card">
+            <h2>My attendance</h2>
+            <p>See the days you were present, absent, late or excused.</p>
+            <a href="{{ route('portal.attendance') }}" class="btn btn-secondary">Open my attendance</a>
+        </div>
+    @endif
 @endsection
