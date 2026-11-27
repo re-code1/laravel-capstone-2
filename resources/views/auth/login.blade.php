@@ -1,20 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Login')
+@section('title', 'Log in')
 
 @section('content')
-    <section class="card card-narrow">
-        <h1>Login</h1>
+    <div class="card card-narrow">
+        <h1>Log in</h1>
 
-        {{-- Form only for now: no action yet, real login comes in a later step. --}}
+        {{-- Form only for now: no action yet, real login comes in Wave 1. --}}
         <form>
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="you@example.com">
+            <input id="email" name="email" type="email" class="input @error('email') input-error @enderror"
+                   value="{{ old('email') }}" placeholder="you@example.com" required autofocus>
+            @error('email') <div class="field-error">{{ $message }}</div> @enderror
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password">
+            <input id="password" name="password" type="password" class="input" required>
 
-            <button type="button" class="btn">Log in</button>
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary">Log in</button>
+            </div>
         </form>
-    </section>
+    </div>
 @endsection
