@@ -21,10 +21,12 @@ Route::middleware('auth')->group(function () {
 });
 
 // ===== Seat 3: students (teacher) =====
+Route::middleware(['auth', 'role:teacher,admin'])->group(function () {
+    // Seat 3 routes go here.
+});
 
 // ===== Seat 4: subjects and marks (teacher) =====
-// ASSUMPTION (Seat 2): the role middleware alias is `role`. Adjust after feat/auth merges.
-Route::middleware(['auth', 'role:teacher'])->group(function () {
+Route::middleware(['auth', 'role:teacher,admin'])->group(function () {
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
     Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
@@ -33,12 +35,14 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
 });
 
 // ===== Seat 5: student portal (/my/...) =====
-// ASSUMPTION (Seat 2): the role middleware alias is `role`, and the menu links use
-// the route names portal.subjects and portal.marks. Adjust after feat/auth merges.
+// The menu links use the route names portal.subjects and portal.marks.
 // No {id} in these URLs: the controller always reads auth()->user()->student.
-Route::middleware(['auth', 'role:student'])->group(function () {
+Route::middleware(['auth', 'role:student,admin'])->group(function () {
     Route::get('/my/subjects', [PortalController::class, 'subjects'])->name('portal.subjects');
     Route::get('/my/marks', [PortalController::class, 'marks'])->name('portal.marks');
 });
 
 // ===== Seat 6: principal (read-only) =====
+Route::middleware(['auth', 'role:principal,admin'])->prefix('principal')->group(function () {
+    // Seat 6 routes go here.
+});
