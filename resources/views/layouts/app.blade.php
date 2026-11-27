@@ -62,6 +62,11 @@
                         <a href="{{ route('principal.teachers') }}" @class(['active' => request()->routeIs('principal.teachers')])>Teachers</a>
                     @endif
                 @endif
+
+                {{-- Students and teachers apply for leave. Admin and principal do not. --}}
+                @if ((auth()->user()->hasRole('student') || auth()->user()->hasRole('teacher')) && Route::has('leave.index'))
+                    <a href="{{ route('leave.index') }}" @class(['active' => request()->routeIs('leave.*')])>My leave</a>
+                @endif
             </nav>
         @endauth
 
