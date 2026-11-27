@@ -29,15 +29,39 @@
         @auth
             <nav class="sidebar" aria-label="Main menu">
                 <a href="{{ url('/') }}" @class(['active' => request()->is('/')])>Home</a>
-                {{-- Seat 5: student portal links (added with seat 2's permission). --}}
-                @if (auth()->user()->hasRole('student'))
-                    <a href="{{ route('portal.subjects') }}" @class(['active' => request()->routeIs('portal.subjects')])>My subjects</a>
-                    <a href="{{ route('portal.marks') }}" @class(['active' => request()->routeIs('portal.marks')])>My marks</a>
+
+                {{-- Admin sees every link, under small headings so the two "Students" links are clear. --}}
+                @php($isAdmin = auth()->user()->hasRole('admin'))
+
+                @if ($isAdmin || auth()->user()->hasRole('teacher'))
+                    @if ($isAdmin) <div class="menu-heading">Teacher</div> @endif
+                    @if (Route::has('students.index'))
+                        <a href="{{ route('students.index') }}" @class(['active' => request()->routeIs('students.*')])>Students</a>
+                    @endif
+                    @if (Route::has('subjects.index'))
+                        <a href="{{ route('subjects.index') }}" @class(['active' => request()->routeIs('subjects.*', 'marks.*')])>Subjects</a>
+                    @endif
                 @endif
-                {{-- Menu goes here. The real role menu comes in Wave 3. --}}
-                @unless (auth()->user()->hasRole('student'))
-                    <div class="menu-note">Menu goes here</div>
-                @endunless
+
+                @if ($isAdmin || auth()->user()->hasRole('student'))
+                    @if ($isAdmin) <div class="menu-heading">Student</div> @endif
+                    @if (Route::has('portal.subjects'))
+                        <a href="{{ route('portal.subjects') }}" @class(['active' => request()->routeIs('portal.subjects')])>My subjects</a>
+                    @endif
+                    @if (Route::has('portal.marks'))
+                        <a href="{{ route('portal.marks') }}" @class(['active' => request()->routeIs('portal.marks')])>My marks</a>
+                    @endif
+                @endif
+
+                @if ($isAdmin || auth()->user()->hasRole('principal'))
+                    @if ($isAdmin) <div class="menu-heading">Principal</div> @endif
+                    @if (Route::has('principal.students'))
+                        <a href="{{ route('principal.students') }}" @class(['active' => request()->routeIs('principal.students')])>{{ $isAdmin ? 'All students' : 'Students' }}</a>
+                    @endif
+                    @if (Route::has('principal.teachers'))
+                        <a href="{{ route('principal.teachers') }}" @class(['active' => request()->routeIs('principal.teachers')])>Teachers</a>
+                    @endif
+                @endif
             </nav>
         @endauth
 
