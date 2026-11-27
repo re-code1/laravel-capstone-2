@@ -10,8 +10,15 @@ use Illuminate\Support\Facades\Route;
 // Each seat edits only its own block below.
 
 // ===== Seat 2: login, logout, home, leave =====
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/login', [LoginController::class, 'show'])->name('login');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'show'])->name('login');
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+});
 
 // ===== Seat 3: students (teacher) =====
 
