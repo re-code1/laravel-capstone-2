@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\StudentController;
@@ -19,6 +20,13 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::get('/', HomeController::class)->name('home');
+});
+
+// Apply for leave: students and teachers only (admin and principal do not apply).
+Route::middleware(['auth', 'role:student,teacher'])->group(function () {
+    Route::get('/leave', [LeaveRequestController::class, 'index'])->name('leave.index');
+    Route::get('/leave/create', [LeaveRequestController::class, 'create'])->name('leave.create');
+    Route::post('/leave', [LeaveRequestController::class, 'store'])->name('leave.store');
 });
 
 // ===== Seat 3: students (teacher) =====
