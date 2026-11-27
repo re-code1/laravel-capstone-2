@@ -27,10 +27,35 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'role' => 'student',   // least access by default; use ->teacher(), ->admin() etc. for others
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /** User::factory()->admin()->create() */
+    public function admin(): static
+    {
+        return $this->state(fn () => ['role' => 'admin']);
+    }
+
+    /** User::factory()->principal()->create() */
+    public function principal(): static
+    {
+        return $this->state(fn () => ['role' => 'principal']);
+    }
+
+    /** User::factory()->teacher()->create() */
+    public function teacher(): static
+    {
+        return $this->state(fn () => ['role' => 'teacher']);
+    }
+
+    /** User::factory()->student()->create() (a login only; use Student::factory() for the school record) */
+    public function student(): static
+    {
+        return $this->state(fn () => ['role' => 'student']);
     }
 
     /**
