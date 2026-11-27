@@ -34,6 +34,4 @@
             </table>
         </div>
     @endif
-
-    <p><a href="{{ route('portal.subjects') }}">See my subjects</a></p>
 @endsection
