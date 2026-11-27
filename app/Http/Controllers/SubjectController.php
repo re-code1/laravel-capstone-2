@@ -3,35 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubjectRequest;
+use App\Models\Section;
 use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-// ASSUMPTION (Seat 1): subjects table has `name` and `teacher_id` (points to users.id),
-// and Subject::$fillable includes both. Adjust once feat/schema is merged.
 class SubjectController extends Controller
 {
-    // List only the subjects the logged-in teacher teaches.
+    // List only the subjects the logged-in teacher teaches (sections loaded in one query).
     public function index(Request $request): View
     {
-        $subjects = Subject::where('teacher_id', $request->user()->id)
-            ->orderBy('name')
+        $subjects = $request->user()->subjectsTaught()
+            ->with('section')
+            ->orderBy('code')
             ->get();
 
         return view('subjects.index', ['subjects' => $subjects]);
     }
 
+    // The form needs the list of sections for its dropdown.
     public function create(): View
     {
-        return view('subjects.create');
+        $sections = Section::orderBy('grade_level')->orderBy('name')->get();
+
+        return view('subjects.create', ['sections' => $sections]);
     }
 
     // The teacher comes from the login, never from the form.
     public function store(StoreSubjectRequest $request): RedirectResponse
     {
         Subject::create([
-            'name' => $request->validated('name'),
+            ...$request->validated(),
             'teacher_id' => $request->user()->id,
         ]);
 

@@ -4,42 +4,57 @@
 
 @section('content')
     <section class="card">
-        <h1>Marks for {{ $subject->name }}</h1>
+        <h1>{{ $subject->code }} {{ $subject->name }}</h1>
+        <p>{{ $subject->section->fullName() }}</p>
+
+        <p>
+            Quarter:
+            @foreach ($quarters as $q)
+                @if ($q === $quarter)
+                    <strong>{{ $q }}</strong>
+                @else
+                    <a href="{{ route('marks.edit', ['subject' => $subject, 'quarter' => $q]) }}">{{ $q }}</a>
+                @endif
+            @endforeach
+        </p>
 
         @if (session('status'))
             <p>{{ session('status') }}</p>
         @endif
 
-        @error('grades')
+        @error('scores')
             <p>{{ $message }}</p>
         @enderror
 
         @if ($students->isEmpty())
-            <p>No students are enrolled in this subject yet.</p>
+            <p>There are no students in this section yet.</p>
         @else
-            <p>Enter a grade from 60 to 100 (up to 2 decimals). Leave it empty if there is no grade yet.</p>
+            <p>Enter a score from 0 to 100 (up to 2 decimals). Leave it empty if there is no mark yet.</p>
 
             <form method="POST" action="{{ route('marks.update', $subject) }}">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="quarter" value="{{ $quarter }}">
 
                 <table>
                     <thead>
                         <tr>
-                            <th>Student</th>
-                            <th>Grade</th>
+                            <th>Student no.</th>
+                            <th>Name</th>
+                            <th>Quarter {{ $quarter }} score</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($students as $student)
                             <tr>
-                                <td><label for="grade-{{ $student->id }}">{{ $student->fullName() }}</label></td>
+                                <td>{{ $student->student_no }}</td>
+                                <td><label for="score-{{ $student->id }}">{{ $student->user->name }}</label></td>
                                 <td>
-                                    <input type="number" step="0.01" min="60" max="100"
-                                           id="grade-{{ $student->id }}"
-                                           name="grades[{{ $student->id }}]"
-                                           value="{{ old('grades.'.$student->id, $grades[$student->id] ?? '') }}">
-                                    @error('grades.'.$student->id)
+                                    <input type="number" step="0.01" min="0" max="100"
+                                           id="score-{{ $student->id }}"
+                                           name="scores[{{ $student->id }}]"
+                                           value="{{ old('scores.'.$student->id, $student->marks->first()?->score) }}">
+                                    @error('scores.'.$student->id)
                                         <p>{{ $message }}</p>
                                     @enderror
                                 </td>
