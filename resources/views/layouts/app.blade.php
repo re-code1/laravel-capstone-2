@@ -9,6 +9,15 @@
 <body>
     <header class="site-header">
         <a href="{{ url('/') }}" class="brand">Student Management System</a>
+        @auth
+            <div class="user-menu">
+                <span>{{ auth()->user()->name }}</span>
+                <form method="POST" action="{{ url('/logout') }}" class="inline-form">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary">Log out</button>
+                </form>
+            </div>
+        @endauth
         @guest
             <div class="user-menu">
                 <a href="{{ url('/login') }}" class="btn btn-secondary">Log in</a>
