@@ -43,6 +43,61 @@ class AttendanceTest extends TestCase
         ], $overrides);
     }
 
+    public function test_the_adviser_sees_their_own_students_on_the_sheet(): void
+    {
+        $response = $this->actingAs($this->adviser)->get('/attendance');
+
+        $response->assertOk();
+        $response->assertSee($this->juan->user->name);
+        $response->assertSee($this->ana->user->name);
+    }
+
+    public function test_a_teacher_who_is_not_an_adviser_sees_a_message_not_a_sheet(): void
+    {
+        $teacher = User::factory()->teacher()->create();
+
+        $this->actingAs($teacher)->get('/attendance')
+            ->assertOk()
+            ->assertSee('You are not an adviser of a section.')
+            ->assertDontSee($this->juan->user->name);
+    }
+
+    public function test_a_teacher_asking_for_another_section_still_sees_only_their_own(): void
+    {
+        $otherSection = Section::factory()->create();
+        $stranger = Student::factory()->for($otherSection)->create();
+
+        $this->actingAs($this->adviser)->get('/attendance?section='.$otherSection->id)
+            ->assertOk()
+            ->assertSee($this->juan->user->name)
+            ->assertDontSee($stranger->user->name);
+    }
+
+    public function test_the_admin_can_pick_any_section_on_the_sheet(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $otherSection = Section::factory()->create();
+        $stranger = Student::factory()->for($otherSection)->create();
+
+        $this->actingAs($admin)->get('/attendance?section='.$otherSection->id)
+            ->assertOk()
+            ->assertSee($stranger->user->name)
+            ->assertSee('name="section"', false);
+    }
+
+    public function test_a_saved_status_is_shown_again_as_selected(): void
+    {
+        $this->actingAs($this->adviser)->post('/attendance', $this->sheet());
+
+        $page = $this->actingAs($this->adviser)->get('/attendance?date='.today()->toDateString());
+
+        // Ana was saved as absent, so her select shows "absent" as the selected option.
+        $this->assertMatchesRegularExpression(
+            '/<select id="status-'.$this->ana->id.'"[^>]*>.*?<option value="absent"\s+selected/s',
+            $page->getContent()
+        );
+    }
+
     public function test_an_adviser_can_save_attendance_for_their_own_section(): void
     {
         $response = $this->actingAs($this->adviser)->post('/attendance', $this->sheet());
