@@ -28,9 +28,41 @@
 - Change the database only with migrations. Never edit a migration that has already run; tell me instead.
 - Load relationships with `with()` or `load()` so a page never runs one query per row.
 
+## Database (decided in MyTask-01, details in `docs/MyTask-01.md` and README "Tables")
+
+- MariaDB only. `users.role`, `attendances.status` and `leave_requests.status` are MariaDB ENUM columns. Their allowed values are repeated as `User::ROLES`, `Attendance::STATUSES` and `LeaveRequest::STATUSES`; use them in Form Requests (`Rule::in(...)`).
+- `users.role` has no default and is never in `$fillable`. Columns the app sets itself are not fillable either: `students.user_id`, `leave_requests.user_id`/`status`/`decided_*`, `attendances.recorded_by`, `notes.author_id`. Set them in code.
+- Tests run on MariaDB, in database `report_cards_test` (see `phpunit.xml`), never `report_cards`. Pest is not installed yet; the existing tests are PHPUnit classes.
+- Each person sets their own `DB_PORT` in `.env`: 3309 on the lab PCs, 3306 for a MariaDB inside WSL.
+- Tables: users (role), sections (adviser_id), students (user_id, student_no, section_id), subjects (code, section_id, teacher_id), marks, attendances, leave_requests, notes.
+- The migrations `2026_11_27_000001` to `000008` have run. Never edit them; add a new migration instead.
+
+## Who may do what
+
+| Action | Admin | Principal | Teacher | Student |
+|---|---|---|---|---|
+| Create teacher/principal accounts, set up sections | yes | no | no | no |
+| Add or edit a student | yes | no | yes | no |
+| Add or edit a subject | yes | no | yes | no |
+| Enter or change marks | yes | no | own subjects | no |
+| Record attendance | yes | no | own section | no |
+| Write a note on a student | yes | no | yes | no |
+| See subjects, marks, attendance, notes | all | all | own section and subjects | own only |
+| Apply for leave | no | no | yes | yes |
+| Decide on a student's leave | yes | yes | own advisory section | no |
+| Decide on a teacher's leave | yes | yes | no | no |
+| See all teachers, all students, who is on leave today | yes | yes | no | no |
+
+- "Own subjects" means `subjects.teacher_id` is the user. "Own section" and "own advisory section" mean `sections.adviser_id` is the user.
+- Nobody decides on their own leave. A request is decided once: only `pending` can change. `end_date` is not before `start_date`.
+- Students get `/my/...` pages that read the logged-in student and take no id from the URL. Any page that does take a student id returns 403 for another student.
+- A teacher can't save a mark for a subject they don't teach, even with an edited hidden `subject_id`. Check it in the Policy, not just the form.
+- The principal can NOT change marks.
+- Write a test for every "own" cell.
+
 ## School rules
 
-- Grades are 60 to 100.
+- Marks are 0 to 100 (`marks.score` is decimal(5,2)). One mark per student, subject and quarter (1 to 4).
 - General average: plain average of every grade that is not NULL, rounded to 2 decimals.
 - Any NULL grade: remark INC. No grades at all: NO GRADES. Average 75 or above: PASSED, else FAILED.
 
