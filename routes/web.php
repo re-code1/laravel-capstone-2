@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\PortalController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,9 @@ Route::middleware('auth')->group(function () {
 
 // ===== Seat 3: students (teacher) =====
 Route::middleware(['auth', 'role:teacher,admin'])->group(function () {
-    // Seat 3 routes go here.
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
 });
 
 // ===== Seat 4: subjects and marks (teacher) =====
