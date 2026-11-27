@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\SubjectController;
