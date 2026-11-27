@@ -3,23 +3,22 @@
 @section('title', 'My Subjects')
 
 @section('content')
-    <section class="card">
+    <div class="page-header">
         <h1>My Subjects</h1>
+        <a href="{{ route('subjects.create') }}" class="btn btn-compose">+ New subject</a>
+    </div>
 
-        @if (session('status'))
-            <p>{{ session('status') }}</p>
-        @endif
-
-        @if ($subjects->isEmpty())
-            <p>You have no subjects yet.</p>
-        @else
-            <table>
+    @if ($subjects->isEmpty())
+        <div class="empty-state">You have no subjects yet.</div>
+    @else
+        <div class="table-wrap">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Code</th>
                         <th>Subject</th>
                         <th>Section</th>
-                        <th></th>
+                        <th class="actions"><span class="sr-only">Actions</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,13 +27,13 @@
                             <td>{{ $subject->code }}</td>
                             <td>{{ $subject->name }}</td>
                             <td>{{ $subject->section->fullName() }}</td>
-                            <td><a href="{{ route('marks.edit', $subject) }}">Enter marks</a></td>
+                            <td class="actions">
+                                <a href="{{ route('marks.edit', $subject) }}" class="btn btn-secondary">Enter marks</a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-        @endif
-
-        <a href="{{ route('subjects.create') }}" class="btn">Add a subject</a>
-    </section>
+        </div>
+    @endif
 @endsection
