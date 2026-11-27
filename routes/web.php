@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\MyAttendanceController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -34,6 +36,15 @@ Route::middleware(['auth', 'role:teacher,admin'])->group(function () {
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+
+    // Attendance sheet: an adviser records their own section, admin any section.
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
+});
+
+// My attendance (Seat 3): the logged-in student's own records. No {id} in the URL.
+Route::middleware(['auth', 'role:student,admin'])->group(function () {
+    Route::get('/my/attendance', MyAttendanceController::class)->name('portal.attendance');
 });
 
 // ===== Seat 4: subjects and marks (teacher) =====

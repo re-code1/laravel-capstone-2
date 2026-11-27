@@ -145,4 +145,8 @@ label { display: block; margin: 16px 0 6px; font: 500 14px var(--font); color: v
 .badge-pending  { background: var(--color-warning-bg); color: var(--color-warning); }
 .badge-approved { background: var(--color-success-bg); color: var(--color-success); }
 .badge-rejected { background: var(--color-danger-bg);  color: var(--color-danger); }
+.badge-present  { background: var(--color-success-bg); color: var(--color-success); }
+.badge-absent   { background: var(--color-danger-bg);  color: var(--color-danger); }
+.badge-late     { background: var(--color-warning-bg); color: var(--color-warning); }
+.badge-excused  { background: var(--color-neutral-bg); color: var(--color-neutral); }
 textarea.input { min-height: 96px; resize: vertical; }

@@ -25,6 +25,14 @@
         </div>
     @endif
 
+    @if (Route::has('attendance.index'))
+        <div class="card">
+            <h2>Attendance</h2>
+            <p>Record attendance for any section.</p>
+            <a href="{{ route('attendance.index') }}" class="btn btn-secondary">Open attendance</a>
+        </div>
+    @endif
+
     {{-- Student pages --}}
     @if (Route::has('portal.subjects'))
         <div class="card">
@@ -39,6 +47,14 @@
             <h2>My marks</h2>
             <p>The student view of marks.</p>
             <a href="{{ route('portal.marks') }}" class="btn btn-secondary">Open my marks</a>
+        </div>
+    @endif
+
+    @if (Route::has('portal.attendance'))
+        <div class="card">
+            <h2>My attendance</h2>
+            <p>The student view of attendance.</p>
+            <a href="{{ route('portal.attendance') }}" class="btn btn-secondary">Open my attendance</a>
         </div>
     @endif
 
