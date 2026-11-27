@@ -15,15 +15,6 @@ class SubjectTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // TODO (Seat 2): remove this line once the `role` middleware is merged,
-        // so these tests also cover "only teachers may enter".
-        $this->withoutMiddleware('role');
-    }
-
     public function test_a_teacher_sees_only_their_own_subjects(): void
     {
         $teacher = User::factory()->teacher()->create();
@@ -41,6 +32,19 @@ class SubjectTest extends TestCase
     {
         $this->get(route('subjects.index'))->assertRedirect(route('login'));
         $this->post(route('subjects.store'), [])->assertRedirect(route('login'));
+    }
+
+    public function test_a_student_cannot_open_or_use_the_subject_pages(): void
+    {
+        $student = User::factory()->student()->create();
+
+        $this->actingAs($student)->get(route('subjects.index'))->assertForbidden();
+        $this->actingAs($student)->get(route('subjects.create'))->assertForbidden();
+        $this->actingAs($student)->post(route('subjects.store'), [
+            'name' => 'Math', 'code' => 'M7', 'section_id' => Section::factory()->create()->id,
+        ])->assertForbidden();
+
+        $this->assertDatabaseCount('subjects', 0);
     }
 
     public function test_the_create_form_lists_the_sections(): void
