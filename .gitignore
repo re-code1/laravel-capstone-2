@@ -5,6 +5,7 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+/.claude/role-2-plans/
 /.codex
 /.cursor/
 /.idea
