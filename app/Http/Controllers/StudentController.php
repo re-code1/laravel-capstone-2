@@ -2,65 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStudentRequest;
+use App\Models\Section;
 use App\Models\Student;
 use App\Services\StudentService;
-use App\Http\Requests\StoreStudentRequest;
-use App\Http\Requests\UpdateStudentRequest;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class StudentController extends Controller
 {
-    // Step 1: Display all students
-    public function index()
+    // List every student. User and section load in one query each, not one per row.
+    public function index(): View
     {
-        $students = Student::with('user')->get();
+        $students = Student::with(['user', 'section'])->orderBy('student_no')->get();
 
-        return view('students.index', compact('students'));
+        return view('students.index', ['students' => $students]);
     }
 
-    // Step 2: Display student registration form
-    public function create()
+    // The form needs the list of sections for its dropdown.
+    public function create(): View
     {
-        return view('students.create');
+        $sections = Section::orderBy('grade_level')->orderBy('name')->get();
+
+        return view('students.create', ['sections' => $sections]);
     }
 
-    // Step 3: Save a new student
-    public function store(StoreStudentRequest $request, StudentService $studentService)
+    // The service creates the login account and the student record together.
+    public function store(StoreStudentRequest $request, StudentService $service): RedirectResponse
     {
-        $studentService->createStudent($request->validated());
+        $service->create($request->validated());
 
-        return redirect()
-            ->route('students.index')
-            ->with('success', 'Student successfully registered!');
-    }
-
-    // Step 4: Display student editing form
-    public function edit(Student $student)
-    {
-        return view('students.edit', compact('student'));
-    }
-
-    // Step 5: Update existing student
-    public function update(UpdateStudentRequest $request, Student $student)
-    {
-        $data = $request->validated();
-
-        DB::transaction(function () use ($data, $student) {
-
-            $student->user->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
-            ]);
-
-            $student->update([
-                'student_number' => $data['student_number'],
-                'grade_level' => $data['grade_level'],
-            ]);
-
-        });
-
-        return redirect()
-            ->route('students.index')
-            ->with('success', 'Student information updated successfully!');
+        return redirect()->route('students.index')->with('status', 'Student added.');
     }
 }
