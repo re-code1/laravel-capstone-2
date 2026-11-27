@@ -3,14 +3,18 @@
 @section('title', 'My subjects')
 
 @section('content')
-    <section class="card">
-        <h1>My subjects</h1>
-        <p>{{ $student->user->name }} &middot; {{ $student->section->fullName() }}</p>
+    <div class="page-header">
+        <div>
+            <h1>My subjects</h1>
+            <p>{{ $student->user->name }} &middot; {{ $student->section->fullName() }}</p>
+        </div>
+    </div>
 
-        @if ($subjects->isEmpty())
-            <p>No subjects in your section yet.</p>
-        @else
-            <table>
+    @if ($subjects->isEmpty())
+        <div class="empty-state">No subjects in your section yet.</div>
+    @else
+        <div class="table-wrap">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Code</th>
@@ -28,8 +32,8 @@
                     @endforeach
                 </tbody>
             </table>
-        @endif
+        </div>
+    @endif
 
-        <p><a href="{{ route('portal.marks') }}">See my marks</a></p>
-    </section>
+    <p><a href="{{ route('portal.marks') }}">See my marks</a></p>
 @endsection
