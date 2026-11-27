@@ -3,16 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 // Seat 5: the student portal. A student only ever sees their own data, because
 // the student always comes from the login, never from the URL.
-// ASSUMPTION (Seat 1): User::student() hasOne, Student::user()/section() belongsTo,
-// Student::marks() hasMany, Mark::subject() and Subject::teacher() belongsTo,
-// subjects has `code`, `name`, `section_id`; marks has `quarter`, `score`.
-// Adjust once feat/schema is merged.
 class PortalController extends Controller
 {
     // My subjects: every subject in the student's section, with its teacher.
@@ -20,8 +15,7 @@ class PortalController extends Controller
     {
         $student = $this->currentStudent($request);
 
-        // If Seat 1 adds Section::subjects(), this can become $student->section->subjects().
-        $subjects = Subject::where('section_id', $student->section_id)
+        $subjects = $student->section->subjects()
             ->with('teacher')
             ->orderBy('code')
             ->get();
