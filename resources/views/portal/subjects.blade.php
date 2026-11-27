@@ -34,6 +34,4 @@
             </table>
         </div>
     @endif
-
-    <p><a href="{{ route('portal.marks') }}">See my marks</a></p>
 @endsection
