@@ -8,7 +8,10 @@
 </head>
 <body>
     <header class="site-header">
-        <a href="{{ url('/') }}" class="brand">Student Management System</a>
+        <a href="{{ url('/') }}" class="brand">
+            <img src="{{ asset('images/pshs-logo.png') }}" alt="PSHS logo" class="brand-logo">
+            <span>Student Management System</span>
+        </a>
         @auth
             <div class="user-menu">
                 <span>{{ auth()->user()->name }}</span>

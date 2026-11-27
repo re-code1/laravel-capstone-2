@@ -4,7 +4,11 @@
 
 @section('content')
     <div class="card card-narrow">
-        <h1>Log in</h1>
+        <div class="login-brand">
+            <img src="{{ asset('images/pshs-logo.png') }}" alt="PSHS logo">
+            <h1 class="login-title">Student Management System</h1>
+            <p class="login-sub">Log in to continue</p>
+        </div>
 
         <form method="POST" action="{{ url('/login') }}">
             @csrf
