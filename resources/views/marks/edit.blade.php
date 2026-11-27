@@ -3,70 +3,66 @@
 @section('title', 'Marks: '.$subject->name)
 
 @section('content')
-    <section class="card">
+    <div class="page-header">
         <h1>{{ $subject->code }} {{ $subject->name }}</h1>
-        <p>{{ $subject->section->fullName() }}</p>
+        <span class="text-muted">{{ $subject->section->fullName() }}</span>
+    </div>
 
-        <p>
-            Quarter:
-            @foreach ($quarters as $q)
-                @if ($q === $quarter)
-                    <strong>{{ $q }}</strong>
-                @else
-                    <a href="{{ route('marks.edit', ['subject' => $subject, 'quarter' => $q]) }}">{{ $q }}</a>
-                @endif
-            @endforeach
-        </p>
+    <nav class="quarter-tabs" aria-label="Quarter">
+        @foreach ($quarters as $q)
+            <a href="{{ route('marks.edit', ['subject' => $subject, 'quarter' => $q]) }}"
+               @class(['active' => $q === $quarter]) @if ($q === $quarter) aria-current="page" @endif>Quarter {{ $q }}</a>
+        @endforeach
+    </nav>
 
-        @if (session('status'))
-            <p>{{ session('status') }}</p>
-        @endif
+    @error('scores')
+        <div class="alert alert-danger" role="alert">{{ $message }}</div>
+    @enderror
 
-        @error('scores')
-            <p>{{ $message }}</p>
-        @enderror
+    @if ($students->isEmpty())
+        <div class="empty-state">There are no students in this section yet.</div>
+    @else
+        <p class="text-muted text-small">Enter a score from 0 to 100 (up to 2 decimals). Leave it empty if there is no mark yet.</p>
 
-        @if ($students->isEmpty())
-            <p>There are no students in this section yet.</p>
-        @else
-            <p>Enter a score from 0 to 100 (up to 2 decimals). Leave it empty if there is no mark yet.</p>
+        <form method="POST" action="{{ route('marks.update', $subject) }}">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="quarter" value="{{ $quarter }}">
 
-            <form method="POST" action="{{ route('marks.update', $subject) }}">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="quarter" value="{{ $quarter }}">
-
-                <table>
+            <div class="table-wrap">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Student no.</th>
                             <th>Name</th>
-                            <th>Quarter {{ $quarter }} score</th>
+                            <th class="num">Quarter {{ $quarter }} score</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($students as $student)
                             <tr>
                                 <td>{{ $student->student_no }}</td>
-                                <td><label for="score-{{ $student->id }}">{{ $student->user->name }}</label></td>
-                                <td>
+                                <td><label for="score-{{ $student->id }}" class="table-label">{{ $student->user->name }}</label></td>
+                                <td class="num">
                                     <input type="number" step="0.01" min="0" max="100"
+                                           class="input input-score @error('scores.'.$student->id) input-error @enderror"
                                            id="score-{{ $student->id }}"
                                            name="scores[{{ $student->id }}]"
                                            value="{{ old('scores.'.$student->id, $student->marks->first()?->score) }}">
                                     @error('scores.'.$student->id)
-                                        <p>{{ $message }}</p>
+                                        <div class="field-error">{{ $message }}</div>
                                     @enderror
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
 
-                <button type="submit" class="btn">Save marks</button>
-            </form>
-        @endif
-
-        <p><a href="{{ route('subjects.index') }}">Back to my subjects</a></p>
-    </section>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save marks</button>
+                <a href="{{ route('subjects.index') }}" class="btn btn-secondary">Back to my subjects</a>
+            </div>
+        </form>
+    @endif
 @endsection

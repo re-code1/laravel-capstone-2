@@ -31,9 +31,6 @@ class MarkTest extends TestCase
     {
         parent::setUp();
 
-        // TODO (Seat 2): remove this line once the `role` middleware is merged.
-        $this->withoutMiddleware('role');
-
         $this->teacher = User::factory()->teacher()->create();
         $this->section = Section::factory()->create();
         $this->subject = Subject::factory()->create([
@@ -71,6 +68,16 @@ class MarkTest extends TestCase
             ->assertOk()
             ->assertSee('Juan Dela Cruz')
             ->assertSee('Ana Santos');
+    }
+
+    public function test_a_student_cannot_open_or_save_marks(): void
+    {
+        $student = $this->juan->user;
+
+        $this->actingAs($student)->get(route('marks.edit', $this->subject))->assertForbidden();
+        $this->save([$this->juan->id => 100], as: $student)->assertForbidden();
+
+        $this->assertDatabaseCount('marks', 0);
     }
 
     public function test_another_teacher_gets_403_on_the_marks_page(): void
