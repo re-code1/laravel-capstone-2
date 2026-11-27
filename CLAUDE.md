@@ -4,7 +4,7 @@
 
 - **Backend:** Laravel 13 (PHP 8.3) using MariaDB (port 3309)
 - **Frontend:** Blade.php with plain CSS (`public/css/school.css`). No Tailwind, no npm, no Vite, no CDN links.
-- **Design standard:** Front-end styling follows `.claude/agents/frontend-designer.md` (colours, buttons, forms, tables, badges).
+- **Design standard:** Front-end styling follows `.claude/agents/frontend-designer.md` (colours, buttons, forms, tables, badges). **Always** use `frontend-designer.md` for any front-end work (Blade markup and CSS), so the whole site has one standard design. Don't invent new styles or HTML structures that it already covers.
 
 ## Environment
 
@@ -17,6 +17,7 @@
 1. **Discuss before executing.** Always discuss the approach with the user first, and get their agreement before running or writing any code.
 2. **Ask when unsure.** Whenever you're unsure of something while coding, stop and ask the user for clarification. Do not guess or assume.
 3. **Ask for missing context.** If you lack context, tell the user and ask specifically what you're missing so they can provide it.
+4. **Pull first.** Before any other git action (branch, merge, commit, push, PR), run `git pull` (or `git fetch`) and check what changed on the remote. Tell the user about changes that touch your files or your plan before going on.
 
 ## Architecture (the restaurant)
 
