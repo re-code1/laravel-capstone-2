@@ -28,6 +28,21 @@
 - Change the database only with migrations. Never edit a migration that has already run; tell me instead.
 - Load relationships with `with()` or `load()` so a page never runs one query per row.
 
+## Seats and file ownership
+
+One owner per file. Edit only your own seat's files. If you need a change in someone else's file, ask the user.
+
+| Seat | Branch | Owns these files |
+|---|---|---|
+| 1 Schema (Sir Homer) | `feat/schema` | `database/`, `app/Models/` |
+| 2 Owner, login and layout (Reggie) | `feat/auth` | `routes/web.php`, `bootstrap/app.php`, `layouts/app.blade.php`, `Auth/`, `CLAUDE.md` |
+| 3 Students (Sir JP) | `feat/students` | `StudentController`, `StudentService`, its Form Requests, `views/students/` |
+| 4 Subjects and marks (Sir Iam) | `feat/marks` | `SubjectController`, `MarkController`, `MarkPolicy`, `views/subjects/`, `views/marks/` |
+| 5 Student portal (Sir Franklin) | `feat/portal` | `PortalController`, `views/portal/` |
+| 6 Quality and principal (Sir Homer) | `feat/tests` | `tests/`, `.github/`, `PrincipalController`, `views/principal/` |
+
+- `main` is protected: every change goes through a pull request with 1 approval and a passing `tests` check. Never merge your own PR.
+
 ## Database (decided in MyTask-01, details in `docs/MyTask-01.md` and README "Tables")
 
 - MariaDB only. `users.role`, `attendances.status` and `leave_requests.status` are MariaDB ENUM columns. Their allowed values are repeated as `User::ROLES`, `Attendance::STATUSES` and `LeaveRequest::STATUSES`; use them in Form Requests (`Rule::in(...)`).
