@@ -13,14 +13,26 @@
         @if ($subjects->isEmpty())
             <p>You have no subjects yet.</p>
         @else
-            <ul>
-                @foreach ($subjects as $subject)
-                    <li>
-                        {{ $subject->name }}
-                        <a href="{{ route('marks.edit', $subject) }}">Enter marks</a>
-                    </li>
-                @endforeach
-            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Subject</th>
+                        <th>Section</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($subjects as $subject)
+                        <tr>
+                            <td>{{ $subject->code }}</td>
+                            <td>{{ $subject->name }}</td>
+                            <td>{{ $subject->section->fullName() }}</td>
+                            <td><a href="{{ route('marks.edit', $subject) }}">Enter marks</a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         @endif
 
         <a href="{{ route('subjects.create') }}" class="btn">Add a subject</a>

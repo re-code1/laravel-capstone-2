@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Subject;
 use App\Models\User;
 
-// ASSUMPTION (Seat 1): subjects.teacher_id points to users.id.
 class MarkPolicy
 {
     // A teacher may enter marks only for a subject they teach.

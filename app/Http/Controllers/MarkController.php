@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ShowMarksRequest;
 use App\Http\Requests\UpdateMarksRequest;
 use App\Models\Mark;
 use App\Models\Subject;
@@ -12,22 +13,18 @@ use Illuminate\View\View;
 
 class MarkController extends Controller
 {
-    // Show the marks form for one subject.
-    public function edit(Subject $subject): View
+    // Show the marks form for one subject and one quarter.
+    public function edit(ShowMarksRequest $request, Subject $subject, MarkService $marks): View
     {
         Gate::authorize('enter', [Mark::class, $subject]);
 
-        // ASSUMPTION (Seat 1): Subject::students() is the enrollment relationship.
-        // If Student::fullName() reads from the user row, change this to ->with('user')->get().
-        $students = $subject->students()->get();
-
-        // One query for all grades: [studentId => grade].
-        $grades = Mark::where('subject_id', $subject->id)->pluck('grade', 'student_id');
+        $quarter = $request->quarter();
 
         return view('marks.edit', [
-            'subject' => $subject,
-            'students' => $students,
-            'grades' => $grades,
+            'subject' => $subject->load('section'),
+            'quarter' => $quarter,
+            'quarters' => MarkService::QUARTERS,
+            'students' => $marks->roster($subject, $quarter),
         ]);
     }
 
@@ -36,8 +33,11 @@ class MarkController extends Controller
     {
         Gate::authorize('enter', [Mark::class, $subject]);
 
-        $marks->saveMarks($subject, $request->validated('grades'));
+        $quarter = (int) $request->validated('quarter');
+        $marks->saveScores($subject, $quarter, $request->validated('scores'));
 
-        return redirect()->route('marks.edit', $subject)->with('status', 'Marks saved.');
+        return redirect()
+            ->route('marks.edit', ['subject' => $subject, 'quarter' => $quarter])
+            ->with('status', 'Marks saved.');
     }
 }

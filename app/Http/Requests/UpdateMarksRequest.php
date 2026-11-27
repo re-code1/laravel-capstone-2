@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Mark;
+use App\Services\MarkService;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMarksRequest extends FormRequest
@@ -16,14 +18,21 @@ class UpdateMarksRequest extends FormRequest
 
     public function rules(): array
     {
-        // ASSUMPTION (Seat 1): Subject has a students() belongsToMany relationship (enrollment).
-        $enrolledIds = $this->route('subject')->students()->allRelatedIds()->implode(',');
+        $allowedIds = app(MarkService::class)->studentIds($this->route('subject'));
 
         return [
-            // Only enrolled students may appear as keys: grades[studentId].
-            'grades' => ['required', 'array:'.$enrolledIds],
-            // Empty is allowed (INC). Otherwise 60 to 100, at most 2 decimals.
-            'grades.*' => ['nullable', 'numeric', 'between:60,100', 'decimal:0,2'],
+            'quarter' => ['required', 'integer', 'between:1,4'],
+            'scores' => [
+                'required', 'array',
+                // Only students of this subject's section may appear as keys: scores[studentId].
+                function (string $attribute, mixed $value, Closure $fail) use ($allowedIds) {
+                    if (array_diff(array_keys($value), $allowedIds) !== []) {
+                        $fail('Some students are not in this subject\'s section.');
+                    }
+                },
+            ],
+            // Empty is allowed (no mark yet). Otherwise 0 to 100, at most 2 decimals.
+            'scores.*' => ['nullable', 'numeric', 'between:0,100', 'decimal:0,2'],
         ];
     }
 }
